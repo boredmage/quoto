@@ -27,7 +27,8 @@
             "node_modules/@expo-google-fonts/mona-sans/700Bold/MonaSans_700Bold.ttf"
           ]
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "name": "Quoto",
     "slug": "quoto",

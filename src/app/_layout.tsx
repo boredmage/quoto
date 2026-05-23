@@ -22,6 +22,15 @@ export default function RootLayout() {
       <Stack.Screen name="personalize" />
       <Stack.Screen name="enable-notifications" />
       <Stack.Screen name="home" />
+      <Stack.Screen name="collections" />
+      <Stack.Screen
+        name="download"
+        options={{ presentation: "fullScreenModal" }}
+      />
+      <Stack.Screen
+        name="customize"
+        options={{ presentation: "fullScreenModal" }}
+      />
     </Stack>
   );
 }
