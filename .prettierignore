@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# expo / build output
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# native
+android/
+ios/
+
+# generated
+src/uniwind-types.d.ts
+
+# lockfiles
+bun.lock
+*.lock

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "scheme": "acme",
+    "scheme": "quoto",
     "userInterfaceStyle": "automatic",
     "orientation": "default",
     "web": {
@@ -8,9 +8,33 @@
     },
     "plugins": [
       "expo-router",
-      "expo-status-bar"
+      "expo-status-bar",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf",
+            "node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf",
+            "node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf",
+            "node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf",
+            "node_modules/@expo-google-fonts/urbanist/400Regular/Urbanist_400Regular.ttf",
+            "node_modules/@expo-google-fonts/urbanist/500Medium/Urbanist_500Medium.ttf",
+            "node_modules/@expo-google-fonts/urbanist/600SemiBold/Urbanist_600SemiBold.ttf",
+            "node_modules/@expo-google-fonts/urbanist/700Bold/Urbanist_700Bold.ttf",
+            "node_modules/@expo-google-fonts/mona-sans/400Regular/MonaSans_400Regular.ttf",
+            "node_modules/@expo-google-fonts/mona-sans/500Medium/MonaSans_500Medium.ttf",
+            "node_modules/@expo-google-fonts/mona-sans/600SemiBold/MonaSans_600SemiBold.ttf",
+            "node_modules/@expo-google-fonts/mona-sans/700Bold/MonaSans_700Bold.ttf"
+          ]
+        }
+      ]
     ],
-    "name": "quote",
-    "slug": "quote"
+    "name": "Quoto",
+    "slug": "quoto",
+    "ios": {
+      "bundleIdentifier": "com.qudusayo.quoto",
+      "supportsTablet": false,
+      "icon": "./assets/ios.icon"
+    }
   }
 }
