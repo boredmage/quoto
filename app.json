@@ -28,7 +28,16 @@
           ]
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#f79509",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 60,
+          "resizeMode": "contain"
+        }
+      ]
     ],
     "name": "Quoto",
     "slug": "quoto",
