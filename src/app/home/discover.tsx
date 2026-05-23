@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
   Pressable,
@@ -15,6 +16,7 @@ import { Colors } from "../../constants/colors";
 import { Fonts } from "../../constants/fonts";
 
 export default function Discover() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const cardWidth = (width - 32 - 16) / 2;
@@ -32,7 +34,13 @@ export default function Discover() {
         showsVerticalScrollIndicator={false}
       >
         {CATEGORIES.map((c) => (
-          <Pressable key={c.name} style={[styles.card, { width: cardWidth }]}>
+          <Pressable
+            key={c.name}
+            style={[styles.card, { width: cardWidth }]}
+            onPress={() =>
+              router.push({ pathname: "/topic", params: { name: c.name } })
+            }
+          >
             <Text style={styles.cardTitle}>{c.name}</Text>
             <View style={styles.iconButton}>
               <Svg
