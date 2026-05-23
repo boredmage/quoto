@@ -1,36 +1,42 @@
-import Slider from "@react-native-community/slider";
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { Colors } from "../../constants/colors";
 import { Fonts } from "../../constants/fonts";
+import { Slider } from "../ui/Slider";
+import { TimePickerSheet } from "../ui/TimePickerSheet";
+
+type Editing = "start" | "end" | null;
 
 /**
  * Reminders step (the 8th personalization screen): a "How many" slider plus
- * start/end time fields. The time fields are display-only placeholders for now.
+ * start/end time fields. Tapping a time badge opens a wheel time picker sheet.
  */
 export function ReminderStep() {
   const [count, setCount] = useState(7);
-  const start = "06:20";
-  const end = "18:20";
+  const [start, setStart] = useState("06:20");
+  const [end, setEnd] = useState("18:20");
+  const [editing, setEditing] = useState<Editing>(null);
+
+  const handleSave = (value: string) => {
+    if (editing === "start") setStart(value);
+    else if (editing === "end") setEnd(value);
+    setEditing(null);
+  };
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.card}>
+      <View style={styles.sliderCard}>
         <View style={styles.rowBetween}>
           <Text style={styles.label}>How many</Text>
           <Text style={styles.label}>{count.toFixed(1)}x</Text>
         </View>
         <Slider
-          style={styles.slider}
+          value={count}
           minimumValue={0}
           maximumValue={20}
           step={1}
-          value={count}
           onValueChange={setCount}
-          minimumTrackTintColor={Colors.white}
-          maximumTrackTintColor="rgba(255, 255, 255, 0.15)"
-          thumbTintColor={Colors.white}
         />
         <View style={styles.rowBetween}>
           <Text style={styles.scale}>0</Text>
@@ -39,20 +45,29 @@ export function ReminderStep() {
       </View>
 
       <View style={styles.timeCard}>
-        <View style={styles.timeRow}>
+        <Pressable
+          style={[styles.timeRow, styles.timeRowDivider]}
+          onPress={() => setEditing("start")}
+        >
           <Text style={styles.timeLabel}>Start at</Text>
-          <View style={styles.pill}>
-            <Text style={styles.pillText}>{start}</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{start}</Text>
           </View>
-        </View>
-        <View style={styles.divider} />
-        <View style={styles.timeRow}>
+        </Pressable>
+        <Pressable style={styles.timeRow} onPress={() => setEditing("end")}>
           <Text style={styles.timeLabel}>End at</Text>
-          <View style={styles.pill}>
-            <Text style={styles.pillText}>{end}</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{end}</Text>
           </View>
-        </View>
+        </Pressable>
       </View>
+
+      <TimePickerSheet
+        visible={editing !== null}
+        value={editing === "end" ? end : start}
+        onCancel={() => setEditing(null)}
+        onSave={handleSave}
+      />
     </View>
   );
 }
@@ -61,11 +76,11 @@ const styles = StyleSheet.create({
   wrap: {
     gap: 16,
   },
-  card: {
+  sliderCard: {
     backgroundColor: Colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    gap: 8,
+    borderRadius: 12,
+    padding: 12,
+    gap: 12,
   },
   rowBetween: {
     flexDirection: "row",
@@ -74,48 +89,44 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: Fonts.inter.medium,
-    fontSize: 16,
-    lineHeight: 16 * 1.4,
+    fontSize: 14,
+    lineHeight: 14 * 1.4,
     color: Colors.white,
-  },
-  slider: {
-    width: "100%",
-    height: 40,
   },
   scale: {
     fontFamily: Fonts.inter.regular,
     fontSize: 12,
-    color: Colors.textVariant,
+    color: Colors.white,
   },
   timeCard: {
     backgroundColor: Colors.surface,
-    borderRadius: 16,
-    paddingHorizontal: 16,
+    borderRadius: 12,
+    overflow: "hidden",
   },
   timeRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 14,
+    padding: 12,
+  },
+  timeRowDivider: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Colors.onSurface,
   },
   timeLabel: {
-    fontFamily: Fonts.inter.regular,
-    fontSize: 14,
-    color: Colors.white,
-  },
-  pill: {
-    backgroundColor: "#2e2e2e",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  pillText: {
     fontFamily: Fonts.inter.medium,
     fontSize: 14,
     color: Colors.white,
   },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+  badge: {
+    backgroundColor: Colors.onSurface,
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  badgeText: {
+    fontFamily: Fonts.inter.regular,
+    fontSize: 12,
+    color: Colors.white,
   },
 });
