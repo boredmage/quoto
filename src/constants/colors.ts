@@ -6,6 +6,7 @@ export const Colors = {
   text: "#f6f6f6", // Texts/Text — titles
   textVariant: "#888888", // Texts/TextVariant — subtitles
   background: "#0f0f0f", // Backgrounds/Background — app background
+  surface: "#202020", // Surfaces/Surface — inputs, social buttons
   white: "#ffffff",
   black: "#000000",
 } as const;

@@ -1,0 +1,124 @@
+import Svg, { Circle, Path } from "react-native-svg";
+
+type IconProps = {
+  size?: number;
+  color?: string;
+};
+
+/* ---------------------------- functional icons ---------------------------- */
+
+export function ArrowLeftIcon({ size = 24, color = "#f6f6f6" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M19 12H5M12 19l-7-7 7-7"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+export function EyeIcon({ size = 20, color = "#888888" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <Circle cx={12} cy={12} r={3} stroke={color} strokeWidth={2} />
+    </Svg>
+  );
+}
+
+export function EyeOffIcon({ size = 20, color = "#888888" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M9.88 4.24A10.94 10.94 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19M6.61 6.61A18.5 18.5 0 0 0 2 11s3.5 7 10 7a10.94 10.94 0 0 0 5.39-1.39M9.9 9.9a3 3 0 0 0 4.2 4.2M2 2l20 20"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+export function CheckIcon({ size = 14, color = "#000000" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M20 6 9 17l-5-5"
+        stroke={color}
+        strokeWidth={3}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+/* ------------------------------ brand icons ------------------------------- */
+
+export function GoogleIcon({ size = 24 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 48 48">
+      <Path
+        fill="#EA4335"
+        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z"
+      />
+      <Path
+        fill="#4285F4"
+        d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65Z"
+      />
+      <Path
+        fill="#FBBC05"
+        d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19Z"
+      />
+      <Path
+        fill="#34A853"
+        d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"
+      />
+    </Svg>
+  );
+}
+
+export function AppleIcon({ size = 24 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        fill="#ffffff"
+        d="M16.365 1.43c0 1.14-.493 2.27-1.177 3.08-.744.9-1.99 1.57-2.987 1.57-.12 0-.23-.02-.3-.03-.01-.06-.04-.22-.04-.39 0-1.15.572-2.27 1.206-2.98C13.876 1.74 15.214 1.04 16.32 1c.03.13.045.28.045.43ZM20.93 17.14c-.03.07-.463 1.58-1.518 3.12-.945 1.34-1.94 2.71-3.43 2.71-1.517 0-1.9-.88-3.63-.88-1.698 0-2.302.91-3.67.91-1.377 0-2.332-1.26-3.428-2.8C4.05 18.38 3.013 15.57 3.013 12.92c0-4.28 2.797-6.55 5.552-6.55 1.448 0 2.675.95 3.6.95.865 0 2.222-1.01 3.902-1.01.613 0 2.886.06 4.374 2.19-.13.07-2.383 1.37-2.383 4.19 0 3.26 2.854 4.42 2.955 4.45Z"
+      />
+    </Svg>
+  );
+}
+
+export function TwitterIcon({ size = 24 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        fill="#ffffff"
+        d="M23.953 4.57a10 10 0 0 1-2.825.775 4.958 4.958 0 0 0 2.163-2.723 9.9 9.9 0 0 1-3.127 1.184 4.92 4.92 0 0 0-8.384 4.482A13.97 13.97 0 0 1 1.64 3.162a4.92 4.92 0 0 0 1.523 6.57 4.9 4.9 0 0 1-2.228-.616v.06a4.92 4.92 0 0 0 3.946 4.827 4.99 4.99 0 0 1-2.212.085 4.94 4.94 0 0 0 4.604 3.417 9.87 9.87 0 0 1-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.94 13.94 0 0 0 7.557 2.209c9.053 0 14-7.496 14-13.986 0-.21 0-.42-.015-.63A9.94 9.94 0 0 0 24 4.59l-.047-.02Z"
+      />
+    </Svg>
+  );
+}
+
+export function FacebookIcon({ size = 24 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Circle cx={12} cy={12} r={12} fill="#1877F2" />
+      <Path
+        fill="#ffffff"
+        d="M16.5 7.5h-2.1c-.62 0-1.4.83-1.4 1.94v1.56h3.5l-.55 3.5h-2.95V23h-3.5v-7.5H7v-3.5h2.5V9.06C9.5 6.7 11.16 5 13.6 5h2.9v2.5Z"
+      />
+    </Svg>
+  );
+}
