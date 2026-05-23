@@ -14,14 +14,16 @@ import { Colors } from "../constants/colors";
 import { Fonts } from "../constants/fonts";
 
 const IMAGE = require("../assets/images/enable-notification-image.png");
-const IMAGE_ASPECT = 1560 / 1616;
+const IMAGE_WIDTH = 1560;
+const IMAGE_HEIGHT = 1616;
 
 export default function EnableNotifications() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
-  const imageWidth = Math.min(width - 32, 360);
+  // Full-bleed image; derive an explicit height from the source ratio.
+  const imageHeight = (width * IMAGE_HEIGHT) / IMAGE_WIDTH;
 
   const finish = () => router.replace("/home");
 
@@ -38,10 +40,11 @@ export default function EnableNotifications() {
           </Text>
         </View>
 
+        {/* Full-bleed mockup — its gradient fades into the dark background. */}
         <Image
           source={IMAGE}
           resizeMode="contain"
-          style={{ width: imageWidth, aspectRatio: IMAGE_ASPECT }}
+          style={{ width, height: imageHeight }}
         />
       </View>
 
@@ -74,12 +77,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    paddingHorizontal: 16,
     paddingVertical: 24,
     gap: 24,
+    overflow: "hidden",
   },
   paragraphs: {
     width: "100%",
+    paddingHorizontal: 16,
     gap: 16,
   },
   title: {
