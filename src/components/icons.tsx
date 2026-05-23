@@ -5,6 +5,132 @@ type IconProps = {
   color?: string;
 };
 
+const STROKE = {
+  strokeWidth: 2,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+};
+
+/* ------------------------------- nav icons -------------------------------- */
+
+export function HomeIcon({ size = 24, color = "#888888" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+        stroke={color}
+        {...STROKE}
+      />
+      <Path
+        d="M9 21v-7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v7"
+        stroke={color}
+        {...STROKE}
+      />
+    </Svg>
+  );
+}
+
+export function DiscoverIcon({ size = 24, color = "#888888" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M4 6h11M4 12h7" stroke={color} {...STROKE} />
+      <Circle cx={15} cy={16} r={4} stroke={color} {...STROKE} />
+      <Path d="M21 22l-3-3" stroke={color} {...STROKE} />
+    </Svg>
+  );
+}
+
+export function BookmarkIcon({ size = 24, color = "#888888" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"
+        stroke={color}
+        {...STROKE}
+      />
+    </Svg>
+  );
+}
+
+export function UserIcon({ size = 24, color = "#888888" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+        stroke={color}
+        {...STROKE}
+      />
+      <Circle cx={12} cy={7} r={4} stroke={color} {...STROKE} />
+    </Svg>
+  );
+}
+
+/* ----------------------------- content icons ------------------------------ */
+
+export function DownloadIcon({ size = 24, color = "#ffffff" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"
+        stroke={color}
+        {...STROKE}
+      />
+    </Svg>
+  );
+}
+
+export function HeartIcon({ size = 24, color = "#ffffff" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+        stroke={color}
+        {...STROKE}
+      />
+    </Svg>
+  );
+}
+
+export function FilePlusIcon({ size = 24, color = "#ffffff" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+        stroke={color}
+        {...STROKE}
+      />
+      <Path d="M14 2v6h6M12 12v6M9 15h6" stroke={color} {...STROKE} />
+    </Svg>
+  );
+}
+
+export function LayoutGridIcon({ size = 24, color = "#ffffff" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M4 4h6v6H4zM14 4h6v6h-6zM14 14h6v6h-6zM4 14h6v6H4z"
+        stroke={color}
+        {...STROKE}
+      />
+    </Svg>
+  );
+}
+
+export function PaletteIcon({ size = 24, color = "#ffffff" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M12 2a10 10 0 0 0 0 20 2.5 2.5 0 0 0 2.5-2.5c0-.7-.3-1.3-.7-1.8-.4-.5-.7-1.1-.7-1.7a2.5 2.5 0 0 1 2.5-2.5H18a4 4 0 0 0 4-4c0-4.97-4.48-9-10-9Z"
+        stroke={color}
+        {...STROKE}
+      />
+      <Circle cx={7.5} cy={10.5} r={1} fill={color} />
+      <Circle cx={12} cy={7.5} r={1} fill={color} />
+      <Circle cx={16.5} cy={10.5} r={1} fill={color} />
+    </Svg>
+  );
+}
+
 /* ---------------------------- functional icons ---------------------------- */
 
 export function ArrowLeftIcon({ size = 24, color = "#f6f6f6" }: IconProps) {
