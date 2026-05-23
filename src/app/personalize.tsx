@@ -33,7 +33,7 @@ export default function Personalize() {
 
   const advance = () => {
     if (step < lastStep) setStep((s) => s + 1);
-    else router.replace("/home");
+    else router.replace("/enable-notifications");
   };
 
   return (

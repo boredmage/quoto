@@ -20,6 +20,7 @@ export default function RootLayout() {
       <Stack.Screen name="sign-in" />
       <Stack.Screen name="sign-up" />
       <Stack.Screen name="personalize" />
+      <Stack.Screen name="enable-notifications" />
       <Stack.Screen name="home" />
     </Stack>
   );
