@@ -1,0 +1,31 @@
+{
+  "fill": {
+    "automatic-gradient": "srgb:0.96863,0.58431,0.03529,1.00000"
+  },
+  "groups": [
+    {
+      "layers": [
+        {
+          "image-name": "quote.png",
+          "name": "quote",
+          "position": {
+            "scale": 2.5,
+            "translation-in-points": [0, 0]
+          }
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.5
+      }
+    }
+  ],
+  "supported-platforms": {
+    "circles": ["watchOS"],
+    "squares": "shared"
+  }
+}
