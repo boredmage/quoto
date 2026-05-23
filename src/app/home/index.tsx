@@ -1,4 +1,6 @@
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -11,11 +13,14 @@ import {
 } from "../../components/icons";
 import { Colors } from "../../constants/colors";
 import { Fonts } from "../../constants/fonts";
+import { CURRENT_QUOTE } from "../../constants/quote";
 
 const BG = require("../../assets/images/backgrounds/bg-main.jpg");
 
 export default function Home() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
+  const [favorited, setFavorited] = useState(false);
 
   return (
     <View style={styles.root}>
@@ -27,21 +32,31 @@ export default function Home() {
         <View style={styles.content}>
           <View style={styles.quote}>
             <View style={styles.textBlock}>
-              <Text style={styles.quoteText}>
-                Walking with a friend in the dark is better than walking alone
-                in the light
-              </Text>
-              <Text style={styles.author}>- Helen Keller -</Text>
+              <Text style={styles.quoteText}>{CURRENT_QUOTE.text}</Text>
+              <Text style={styles.author}>- {CURRENT_QUOTE.author} -</Text>
             </View>
 
             <View style={styles.actions}>
-              <Pressable hitSlop={8}>
+              <Pressable hitSlop={8} onPress={() => router.push("/download")}>
                 <DownloadIcon size={24} color={Colors.white} />
               </Pressable>
-              <Pressable hitSlop={8}>
-                <HeartIcon size={24} color={Colors.white} />
+              <Pressable
+                hitSlop={8}
+                onPress={() => setFavorited((f) => !f)}
+                accessibilityRole="button"
+                accessibilityLabel={favorited ? "Unfavorite" : "Favorite"}
+                accessibilityState={{ selected: favorited }}
+              >
+                <HeartIcon
+                  size={24}
+                  color={favorited ? Colors.brand : Colors.white}
+                  filled={favorited}
+                />
               </Pressable>
-              <Pressable hitSlop={8}>
+              <Pressable
+                hitSlop={8}
+                onPress={() => router.push("/collections")}
+              >
                 <FilePlusIcon size={24} color={Colors.white} />
               </Pressable>
             </View>
@@ -53,7 +68,10 @@ export default function Home() {
             <LayoutGridIcon size={20} color={Colors.white} />
             <Text style={styles.topicsText}>Topics</Text>
           </Pressable>
-          <Pressable style={styles.iconButton}>
+          <Pressable
+            style={styles.iconButton}
+            onPress={() => router.push("/customize")}
+          >
             <PaletteIcon size={24} color={Colors.white} />
           </Pressable>
         </View>

@@ -79,12 +79,17 @@ export function DownloadIcon({ size = 24, color = "#ffffff" }: IconProps) {
   );
 }
 
-export function HeartIcon({ size = 24, color = "#ffffff" }: IconProps) {
+export function HeartIcon({
+  size = 24,
+  color = "#ffffff",
+  filled = false,
+}: IconProps & { filled?: boolean }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path
         d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
         stroke={color}
+        fill={filled ? color : "none"}
         {...STROKE}
       />
     </Svg>
@@ -131,7 +136,57 @@ export function PaletteIcon({ size = 24, color = "#ffffff" }: IconProps) {
   );
 }
 
+export function CopyIcon({ size = 20, color = "#ffffff" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M9 9h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2z"
+        stroke={color}
+        {...STROKE}
+      />
+      <Path
+        d="M5 15a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2"
+        stroke={color}
+        {...STROKE}
+      />
+    </Svg>
+  );
+}
+
+export function ShareIcon({ size = 20, color = "#ffffff" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx={18} cy={5} r={3} stroke={color} {...STROKE} />
+      <Circle cx={6} cy={12} r={3} stroke={color} {...STROKE} />
+      <Circle cx={18} cy={19} r={3} stroke={color} {...STROKE} />
+      <Path
+        d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"
+        stroke={color}
+        {...STROKE}
+      />
+    </Svg>
+  );
+}
+
+/** Outlined circle with a check — used for selected theme/colour swatches. */
+export function CheckCircleIcon({ size = 20, color = "#ffffff" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx={12} cy={12} r={9} stroke={color} {...STROKE} />
+      <Path d="M8.5 12.5l2.5 2.5 4.5-5" stroke={color} {...STROKE} />
+    </Svg>
+  );
+}
+
 /* ---------------------------- functional icons ---------------------------- */
+
+export function XIcon({ size = 24, color = "#ffffff" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path d="M18 6 6 18M6 6l12 12" stroke={color} {...STROKE} />
+    </Svg>
+  );
+}
 
 export function ArrowLeftIcon({ size = 24, color = "#f6f6f6" }: IconProps) {
   return (
