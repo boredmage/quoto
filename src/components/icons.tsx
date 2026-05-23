@@ -209,6 +209,20 @@ export function ArrowLeftIcon({ size = 24, color = "#f6f6f6" }: IconProps) {
   );
 }
 
+export function ChevronLeftIcon({ size = 24, color = "#ffffff" }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M15 18l-6-6 6-6"
+        stroke={color}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
 export function EyeIcon({ size = 20, color = "#888888" }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">

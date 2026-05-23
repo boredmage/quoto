@@ -22,6 +22,7 @@ export default function RootLayout() {
       <Stack.Screen name="personalize" />
       <Stack.Screen name="enable-notifications" />
       <Stack.Screen name="home" />
+      <Stack.Screen name="topic" />
       <Stack.Screen name="collections" />
       <Stack.Screen name="new-collection" />
       <Stack.Screen
