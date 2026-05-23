@@ -1,6 +1,4 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
-import type { ComponentProps } from "react";
 import {
   Pressable,
   ScrollView,
@@ -10,34 +8,11 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, { Path } from "react-native-svg";
 
+import { CATEGORIES } from "../../constants/categories";
 import { Colors } from "../../constants/colors";
 import { Fonts } from "../../constants/fonts";
-
-type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
-
-const CATEGORIES: { name: string; icon: IconName }[] = [
-  { name: "Growth", icon: "trending-up" },
-  { name: "Resillience", icon: "image-outline" },
-  { name: "Happiness", icon: "weather-sunny" },
-  { name: "Creativity", icon: "format-paint" },
-  { name: "Patience", icon: "clock-outline" },
-  { name: "Mindfulness", icon: "flower-outline" },
-  { name: "Leadership", icon: "crown-outline" },
-  { name: "Life", icon: "pulse" },
-  { name: "Wisdom", icon: "brain" },
-  { name: "Love", icon: "heart-outline" },
-  { name: "Time", icon: "timer-sand" },
-  { name: "Inspiration", icon: "lightbulb-outline" },
-  { name: "Success", icon: "trophy-outline" },
-  { name: "Spirituality", icon: "star-outline" },
-  { name: "Courage", icon: "shield-outline" },
-  { name: "Hope", icon: "weather-sunset-up" },
-  { name: "Dreams", icon: "moon-waning-crescent" },
-  { name: "Philosophy", icon: "bank-outline" },
-  { name: "Friendship", icon: "account-group-outline" },
-  { name: "Motivation", icon: "rocket-outline" },
-];
 
 export default function Discover() {
   const insets = useSafeAreaInsets();
@@ -60,11 +35,20 @@ export default function Discover() {
           <Pressable key={c.name} style={[styles.card, { width: cardWidth }]}>
             <Text style={styles.cardTitle}>{c.name}</Text>
             <View style={styles.iconButton}>
-              <MaterialCommunityIcons
-                name={c.icon}
-                size={24}
-                color={Colors.white}
-              />
+              <Svg
+                width={24}
+                height={24}
+                viewBox={c.viewBox ?? "0 0 24 24"}
+                fill="none"
+              >
+                <Path
+                  d={c.path}
+                  stroke={Colors.white}
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </Svg>
             </View>
           </Pressable>
         ))}
@@ -110,7 +94,10 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     alignSelf: "flex-end",
-    padding: 8,
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 10,
     backgroundColor: Colors.onSurface,
   },
