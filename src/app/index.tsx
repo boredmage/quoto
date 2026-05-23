@@ -64,7 +64,7 @@ export default function Onboarding() {
 
   const handleNext = () => {
     if (isLast) {
-      router.replace("/home");
+      router.push("/sign-in");
       return;
     }
     listRef.current?.scrollToIndex({ index: page + 1, animated: true });
