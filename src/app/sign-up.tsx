@@ -81,7 +81,7 @@ export default function SignUp() {
 
             <PrimaryButton
               title="Sign Up"
-              onPress={() => router.replace("/home")}
+              onPress={() => router.replace("/personalize")}
             />
           </View>
 
