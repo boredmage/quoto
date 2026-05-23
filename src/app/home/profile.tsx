@@ -1,12 +1,21 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import type { ComponentProps, ReactNode } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 
 import { Colors } from "../../constants/colors";
 import { Fonts } from "../../constants/fonts";
+
+const JEWEL = require("../../assets/images/backgrounds/jewel.png");
 
 type MdiName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
@@ -106,9 +115,10 @@ export default function Profile() {
             </Defs>
             <Rect width="100%" height="100%" fill="url(#sub)" />
           </Svg>
+          <Image source={JEWEL} style={styles.jewel} resizeMode="contain" />
           <Text style={styles.subTitle}>Try Quoto Premium</Text>
           <Text style={styles.subText}>
-            Access all categories, quotes, themes!
+            {"Access all categories, quotes,\nthemes!"}
           </Text>
         </View>
 
@@ -142,6 +152,8 @@ const styles = StyleSheet.create({
   },
   subCard: {
     width: "100%",
+    height: 108,
+    justifyContent: "center",
     borderRadius: 12,
     overflow: "hidden",
     padding: 12,
@@ -158,6 +170,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 14 * 1.4,
     color: Colors.white,
+  },
+  jewel: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: 125,
+    height: 100,
   },
   section: {
     gap: 12,
