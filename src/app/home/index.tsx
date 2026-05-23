@@ -64,7 +64,10 @@ export default function Home() {
         </View>
 
         <View style={styles.bottomRow}>
-          <Pressable style={styles.topics}>
+          <Pressable
+            style={styles.topics}
+            onPress={() => router.navigate("/home/discover")}
+          >
             <LayoutGridIcon size={20} color={Colors.white} />
             <Text style={styles.topicsText}>Topics</Text>
           </Pressable>
