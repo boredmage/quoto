@@ -7,6 +7,8 @@ export const Colors = {
   textVariant: "#888888", // Texts/TextVariant — subtitles
   background: "#0f0f0f", // Backgrounds/Background — app background
   surface: "#202020", // Surfaces/Surface — inputs, social buttons
+  onSurface: "#292929", // Surfaces/OnSurface — badges & dividers on a surface
+  onSurfaceVariant: "#323232", // Surfaces/OnSurfaceVariant — picker highlight, sheet buttons
   white: "#ffffff",
   black: "#000000",
 } as const;
