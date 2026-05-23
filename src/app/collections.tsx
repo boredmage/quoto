@@ -8,13 +8,8 @@ import { ArrowLeftIcon } from "../components/icons";
 import { PrimaryButton } from "../components/ui/PrimaryButton";
 import { Radio } from "../components/ui/Radio";
 import { Colors } from "../constants/colors";
+import { COLLECTIONS } from "../constants/collections";
 import { Fonts } from "../constants/fonts";
-
-const COLLECTIONS = [
-  { id: "best", title: "My best collection", count: 4 },
-  { id: "motivational", title: "Motivational quotes", count: 3 },
-  { id: "new", title: "New collectioon", count: 2 },
-];
 
 export default function Collections() {
   const router = useRouter();
