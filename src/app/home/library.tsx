@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -12,6 +13,7 @@ const TABS = ["Collections", "Favorites"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function Library() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [tab, setTab] = useState<Tab>("Collections");
 
@@ -69,7 +71,10 @@ export default function Library() {
               ))}
             </View>
 
-            <Pressable style={styles.createButton}>
+            <Pressable
+              style={styles.createButton}
+              onPress={() => router.push("/new-collection")}
+            >
               <MaterialCommunityIcons
                 name="plus"
                 size={24}

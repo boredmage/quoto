@@ -23,6 +23,7 @@ export default function RootLayout() {
       <Stack.Screen name="enable-notifications" />
       <Stack.Screen name="home" />
       <Stack.Screen name="collections" />
+      <Stack.Screen name="new-collection" />
       <Stack.Screen
         name="download"
         options={{ presentation: "fullScreenModal" }}
