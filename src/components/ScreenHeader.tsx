@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import type { ReactNode } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -9,9 +10,16 @@ import { ArrowLeftIcon } from "./icons";
 
 /**
  * Top navigation shared by the profile sub-screens: a centered title with a
- * back arrow pinned to the left. Sits below the status bar (safe-area inset).
+ * back arrow pinned to the left, and an optional action pinned to the right.
+ * Sits below the status bar (safe-area inset).
  */
-export function ScreenHeader({ title }: { title: string }) {
+export function ScreenHeader({
+  title,
+  right,
+}: {
+  title: string;
+  right?: ReactNode;
+}) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -31,6 +39,7 @@ export function ScreenHeader({ title }: { title: string }) {
         <Text style={styles.title} numberOfLines={1}>
           {title}
         </Text>
+        {right ? <View style={styles.right}>{right}</View> : null}
       </View>
     </View>
   );
@@ -46,6 +55,14 @@ const styles = StyleSheet.create({
   back: {
     position: "absolute",
     left: 16,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+    zIndex: 1,
+  },
+  right: {
+    position: "absolute",
+    right: 16,
     top: 0,
     bottom: 0,
     justifyContent: "center",

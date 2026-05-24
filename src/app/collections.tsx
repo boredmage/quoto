@@ -44,7 +44,7 @@ export default function Collections() {
           >
             <View style={styles.cardText}>
               <Text style={styles.cardTitle}>{c.title}</Text>
-              <Text style={styles.cardCount}>{c.count} quotes (s)</Text>
+              <Text style={styles.cardCount}>{c.quotes.length} quote(s)</Text>
             </View>
             <Radio selected={selected === c.id} />
           </Pressable>
