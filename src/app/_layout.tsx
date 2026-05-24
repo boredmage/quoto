@@ -11,6 +11,7 @@ import { fontAssets } from "../constants/fonts";
 import { hydrateQuotePool } from "../services/quotePool";
 import { CollectionsProvider } from "../store/collections";
 import { FavoritesProvider } from "../store/favorites";
+import { QuoteStyleProvider } from "../store/quoteStyle";
 
 // Keep the native splash (brand background + logo) up until fonts AND the
 // prefetched quote pool are ready, then fade out to the AnimatedSplash and the
@@ -63,40 +64,42 @@ export default function RootLayout() {
   return (
     <FavoritesProvider>
       <CollectionsProvider>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: Colors.background },
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="sign-in" />
-          <Stack.Screen name="sign-up" />
-          <Stack.Screen name="personalize" />
-          <Stack.Screen name="enable-notifications" />
-          <Stack.Screen name="home" />
-          <Stack.Screen name="topic" />
-          <Stack.Screen name="pro" />
-          <Stack.Screen name="topics-follow" />
-          <Stack.Screen name="reminders" />
-          <Stack.Screen name="appearance" />
-          <Stack.Screen name="language" />
-          <Stack.Screen name="help-center" />
-          <Stack.Screen name="collections" />
-          <Stack.Screen name="collection" />
-          <Stack.Screen name="new-collection" />
-          <Stack.Screen
-            name="download"
-            options={{ presentation: "fullScreenModal" }}
-          />
-          <Stack.Screen
-            name="customize"
-            options={{ presentation: "fullScreenModal" }}
-          />
-        </Stack>
-        {!splashDone ? (
-          <AnimatedSplash onFinish={() => setSplashDone(true)} />
-        ) : null}
+        <QuoteStyleProvider>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: Colors.background },
+            }}
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen name="sign-in" />
+            <Stack.Screen name="sign-up" />
+            <Stack.Screen name="personalize" />
+            <Stack.Screen name="enable-notifications" />
+            <Stack.Screen name="home" />
+            <Stack.Screen name="topic" />
+            <Stack.Screen name="pro" />
+            <Stack.Screen name="topics-follow" />
+            <Stack.Screen name="reminders" />
+            <Stack.Screen name="appearance" />
+            <Stack.Screen name="language" />
+            <Stack.Screen name="help-center" />
+            <Stack.Screen name="collections" />
+            <Stack.Screen name="collection" />
+            <Stack.Screen name="new-collection" />
+            <Stack.Screen
+              name="download"
+              options={{ presentation: "fullScreenModal" }}
+            />
+            <Stack.Screen
+              name="customize"
+              options={{ presentation: "fullScreenModal" }}
+            />
+          </Stack>
+          {!splashDone ? (
+            <AnimatedSplash onFinish={() => setSplashDone(true)} />
+          ) : null}
+        </QuoteStyleProvider>
       </CollectionsProvider>
     </FavoritesProvider>
   );
