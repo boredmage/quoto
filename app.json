@@ -44,7 +44,16 @@
     "ios": {
       "bundleIdentifier": "com.qudusayo.quoto",
       "supportsTablet": false,
-      "icon": "./assets/ios.icon"
+      "icon": "./assets/ios.icon",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "67898ec0-6774-4365-897e-35b5046bce3a"
+      }
     }
   }
 }

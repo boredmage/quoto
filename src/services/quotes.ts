@@ -53,17 +53,39 @@ async function zenFetch(path: string): Promise<Quote[]> {
     .map((z) => makeQuote(z.q, z.a));
 }
 
-/** A random quote (home + daily). */
+/** A random quote (used as a fallback when the batch endpoint fails). */
 export async function fetchRandomQuote(): Promise<Quote> {
   const [quote] = await zenFetch("random");
   return quote;
 }
 
 /**
- * A quote for a topic. ZenQuotes' keyless API has no topic filtering, so this
- * returns a random quote — the topic is used only as the cache key / label.
- * A tag-aware provider (or a ZenQuotes key) would make this topic-specific.
+ * Bulk-fetch quotes to fill the local quote pool. Tries the batch endpoint
+ * first (one request, ~50 quotes) and falls back to a handful of parallel
+ * /random calls if it's unavailable or rate-limited. Rejects only if both
+ * paths return nothing; callers should keep their existing pool on rejection.
  */
-export async function fetchTopicQuote(_topic: string): Promise<Quote> {
-  return fetchRandomQuote();
+export async function fetchQuoteBatch(target = 50): Promise<Quote[]> {
+  try {
+    const batch = await zenFetch("quotes");
+    if (batch.length > 0) return dedupe(batch).slice(0, target);
+  } catch {
+    // fall through to parallel /random
+  }
+  const parallel = Math.min(target, 10);
+  const results = await Promise.allSettled(
+    Array.from({ length: parallel }, () => fetchRandomQuote()),
+  );
+  const ok = results
+    .filter((r): r is PromiseFulfilledResult<Quote> => r.status === "fulfilled")
+    .map((r) => r.value);
+  if (ok.length === 0) throw new Error("Quotes API unavailable");
+  return dedupe(ok);
+}
+
+function dedupe(quotes: Quote[]): Quote[] {
+  const seen = new Set<string>();
+  return quotes.filter((q) =>
+    seen.has(q.id) ? false : (seen.add(q.id), true),
+  );
 }
