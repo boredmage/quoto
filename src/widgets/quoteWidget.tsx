@@ -40,8 +40,11 @@ function quoteCard(text: string, author: string, s: CardSizing) {
         flex: 1,
         backgroundColor: CARD_BG,
         padding: s.padding,
+        // Vertically centered. We deliberately do NOT set `alignItems: center`:
+        // on the cross axis that collapses each Text to its single-line content
+        // width, so it never wraps. Letting children stretch to the card width
+        // gives the Text a bounded width to wrap within; `textAlign` centers it.
         justifyContent: "center",
-        alignItems: "center",
         gap: 10,
       }}
     >
