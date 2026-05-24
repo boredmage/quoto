@@ -1,23 +1,20 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { ScreenHeader } from "../components/ScreenHeader";
 import { DownloadIcon } from "../components/icons";
 import { Colors } from "../constants/colors";
-import { COLLECTIONS } from "../constants/collections";
 import { Fonts } from "../constants/fonts";
+import { useCollections } from "../store/collections";
 
 /** The quotes saved in a single collection, opened from the Library tab. */
 export default function Collection() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id?: string }>();
-  const collection = COLLECTIONS.find((c) => c.id === id);
-  const [quotes, setQuotes] = useState(collection?.quotes ?? []);
-
-  const remove = (text: string) =>
-    setQuotes((qs) => qs.filter((q) => q.text !== text));
+  const { getCollection, removeFromCollection } = useCollections();
+  const collection = id ? getCollection(id) : undefined;
+  const quotes = collection?.quotes ?? [];
 
   return (
     <View style={styles.root}>
@@ -43,7 +40,7 @@ export default function Collection() {
         showsVerticalScrollIndicator={false}
       >
         {quotes.map((q) => (
-          <View key={q.text} style={styles.card}>
+          <View key={q.id} style={styles.card}>
             <View style={styles.textContent}>
               <Text style={styles.quote}>{q.text}</Text>
               <Text style={styles.author}>- {q.author}</Text>
@@ -51,7 +48,12 @@ export default function Collection() {
             <View style={styles.actions}>
               <Pressable
                 hitSlop={8}
-                onPress={() => router.push("/download")}
+                onPress={() =>
+                  router.push({
+                    pathname: "/download",
+                    params: { text: q.text, author: q.author },
+                  })
+                }
                 accessibilityRole="button"
                 accessibilityLabel="Download quote"
               >
@@ -59,7 +61,9 @@ export default function Collection() {
               </Pressable>
               <Pressable
                 hitSlop={8}
-                onPress={() => remove(q.text)}
+                onPress={() =>
+                  collection && removeFromCollection(collection.id, q.id)
+                }
                 accessibilityRole="button"
                 accessibilityLabel="Remove from collection"
               >

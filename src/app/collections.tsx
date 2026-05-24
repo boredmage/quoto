@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -8,13 +8,24 @@ import { ArrowLeftIcon } from "../components/icons";
 import { PrimaryButton } from "../components/ui/PrimaryButton";
 import { Radio } from "../components/ui/Radio";
 import { Colors } from "../constants/colors";
-import { COLLECTIONS } from "../constants/collections";
 import { Fonts } from "../constants/fonts";
+import { makeQuote } from "../services/quotes";
+import { useCollections } from "../store/collections";
 
+/** Pick a collection to add the current quote to. */
 export default function Collections() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [selected, setSelected] = useState(COLLECTIONS[0].id);
+  const { collections, addToCollection } = useCollections();
+  const params = useLocalSearchParams<{ text?: string; author?: string }>();
+  const [selected, setSelected] = useState(collections[0]?.id ?? "");
+
+  const save = () => {
+    if (selected && params.text && params.author) {
+      addToCollection(selected, makeQuote(params.text, params.author));
+    }
+    router.back();
+  };
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
@@ -30,13 +41,17 @@ export default function Collections() {
           <ArrowLeftIcon size={24} color={Colors.white} />
         </Pressable>
         <Text style={styles.title}>Collections</Text>
-        <Pressable style={styles.addNew} hitSlop={8}>
+        <Pressable
+          style={styles.addNew}
+          hitSlop={8}
+          onPress={() => router.push("/new-collection")}
+        >
           <Text style={styles.addNewText}>Add new</Text>
         </Pressable>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {COLLECTIONS.map((c) => (
+        {collections.map((c) => (
           <Pressable
             key={c.id}
             style={styles.card}
@@ -52,7 +67,7 @@ export default function Collections() {
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
-        <PrimaryButton title="Save" onPress={() => router.back()} />
+        <PrimaryButton title="Save" onPress={save} />
       </View>
     </View>
   );
