@@ -6,6 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import type { ImageSourcePropType } from "react-native";
 
 import { Fonts } from "../constants/fonts";
 
@@ -20,7 +21,7 @@ const KEY = "quoto.quoteStyle.v1";
  * and small, and let Customize echo the same selection back when reopened.
  */
 export type QuoteStyle = {
-  /** 0 = solid colour (driven by `color`), 1–3 = image themes */
+  /** 0 = solid colour (driven by `color`), 1+ = image themes (index into THEMES) */
   theme: number;
   /** Index into SWATCHES (used when theme = 0) */
   color: number;
@@ -36,6 +37,22 @@ export const FONTS = [
   { label: "Abcde", family: Fonts.inter.semibold },
   { label: "Abcde", family: Fonts.monaSans.bold },
   { label: "Abcde", family: Fonts.urbanist.bold },
+];
+
+/**
+ * Background themes shown in Customize and applied to QuoteView /
+ * DownloadableQuote. Index 0 is the neutral solid (renders the chosen
+ * SWATCHES colour, no image); the rest are background images.
+ *
+ * To add a theme: drop a JPG into `src/assets/images/backgrounds/` and append a
+ * new `require()` entry below.
+ */
+export const THEMES: (ImageSourcePropType | null)[] = [
+  null,
+  require("../assets/images/backgrounds/bg-main.jpg"),
+  require("../assets/images/backgrounds/theme-bg-1.jpg"),
+  require("../assets/images/backgrounds/theme-bg-2.jpg"),
+  require("../assets/images/backgrounds/theme-bg-3.jpg"),
 ];
 
 const MIN_FONT = 14;
