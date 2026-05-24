@@ -51,7 +51,12 @@ export default function Collection() {
             <View style={styles.actions}>
               <Pressable
                 hitSlop={8}
-                onPress={() => router.push("/download")}
+                onPress={() =>
+                  router.push({
+                    pathname: "/download",
+                    params: { text: q.text, author: q.author },
+                  })
+                }
                 accessibilityRole="button"
                 accessibilityLabel="Download quote"
               >

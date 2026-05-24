@@ -1,5 +1,5 @@
 import * as Sharing from "expo-sharing";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useRef } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -17,6 +17,14 @@ export default function Download() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const cardRef = useRef<View>(null);
+
+  // Download the quote passed in (e.g. from a collection); fall back to the
+  // current home-screen quote when opened without params.
+  const params = useLocalSearchParams<{ text?: string; author?: string }>();
+  const quote = {
+    text: params.text ?? CURRENT_QUOTE.text,
+    author: params.author ?? CURRENT_QUOTE.author,
+  };
 
   const handleDownload = async () => {
     try {
@@ -55,10 +63,7 @@ export default function Download() {
 
       <View style={styles.content}>
         <View ref={cardRef} collapsable={false}>
-          <DownloadableQuote
-            text={CURRENT_QUOTE.text}
-            author={CURRENT_QUOTE.author}
-          />
+          <DownloadableQuote text={quote.text} author={quote.author} />
         </View>
         <Pressable style={styles.downloadButton} onPress={handleDownload}>
           <Text style={styles.downloadText}>Download image</Text>
