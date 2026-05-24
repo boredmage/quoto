@@ -1,10 +1,21 @@
 import { Voltra, type WidgetVariants } from "voltra";
 
-// The dark card from the Figma widget designs (Grayscale/Black). iOS rounds the
-// widget corners for us, so the card just fills the family with this colour.
-const CARD_BG = "#030401";
+// Import from the pure constants file (not the Provider), so the build-time
+// widget prerender doesn't transitively pull react-native / AsyncStorage and
+// crash on TypeScript types it can't transpile.
+import {
+  DEFAULT_QUOTE_STYLE,
+  SWATCHES,
+  THEME_WIDGET_ASSETS,
+  type QuoteStyle,
+} from "../store/quoteStyleConstants";
+
 const QUOTE_COLOR = "#ffffff";
-const AUTHOR_COLOR = "#888888";
+const AUTHOR_COLOR = "rgba(255, 255, 255, 0.85)";
+// Dark legibility overlay laid over the theme image; matches the share card.
+const OVERLAY_BG = "rgba(0, 0, 0, 0.55)";
+// Fallback when style.theme = 0 and no swatch colour is supplied.
+const NEUTRAL_BG = "#030401";
 
 type CardSizing = {
   padding: number;
@@ -30,59 +41,106 @@ const LARGE: CardSizing = {
   numberOfLines: 7,
 };
 
-// Plain builder (not a component) so each variant value is a Voltra element
-// directly, which is what the widget renderer expects.
-function quoteCard(text: string, author: string, s: CardSizing) {
+/**
+ * One widget card. Renders the user's saved background (image with a dark
+ * legibility overlay, or the solid swatch colour for theme 0) under a flex
+ * column of centered text.
+ *
+ * Wrapping note: `width: "100%"` on each Text is what actually forces
+ * multiline behaviour. Voltra's flex column doesn't always stretch SwiftUI
+ * Text to the parent width, so without an explicit width the text takes its
+ * intrinsic single-line content width and runs out of the card.
+ */
+function quoteCard(
+  text: string,
+  author: string,
+  style: QuoteStyle,
+  s: CardSizing,
+) {
+  const assetName = THEME_WIDGET_ASSETS[style.theme] ?? null;
+  const solidBg = SWATCHES[style.color] ?? NEUTRAL_BG;
+
   return (
-    <Voltra.VStack
-      layout="flex"
-      style={{
-        flex: 1,
-        backgroundColor: CARD_BG,
-        padding: s.padding,
-        // Vertically centered. We deliberately do NOT set `alignItems: center`:
-        // on the cross axis that collapses each Text to its single-line content
-        // width, so it never wraps. Letting children stretch to the card width
-        // gives the Text a bounded width to wrap within; `textAlign` centers it.
-        justifyContent: "center",
-        gap: 10,
-      }}
-    >
-      <Voltra.Text
-        numberOfLines={s.numberOfLines}
-        multilineTextAlignment="center"
+    <Voltra.ZStack style={{ flex: 1 }}>
+      {assetName ? (
+        <>
+          <Voltra.Image
+            source={{ assetName }}
+            resizeMode="cover"
+            style={{ flex: 1, width: "100%", height: "100%" }}
+          />
+          <Voltra.VStack
+            style={{
+              flex: 1,
+              width: "100%",
+              height: "100%",
+              backgroundColor: OVERLAY_BG,
+            }}
+          />
+        </>
+      ) : (
+        <Voltra.VStack
+          style={{
+            flex: 1,
+            width: "100%",
+            height: "100%",
+            backgroundColor: solidBg,
+          }}
+        />
+      )}
+
+      <Voltra.VStack
+        layout="flex"
         style={{
-          color: QUOTE_COLOR,
-          fontSize: s.quoteSize,
-          fontWeight: "600",
-          lineHeight: s.quoteLineHeight,
-          textAlign: "center",
+          flex: 1,
+          padding: s.padding,
+          justifyContent: "center",
+          gap: 10,
         }}
       >
-        {text}
-      </Voltra.Text>
-      <Voltra.Text
-        multilineTextAlignment="center"
-        style={{
-          color: AUTHOR_COLOR,
-          fontSize: s.authorSize,
-          fontWeight: "500",
-          textAlign: "center",
-        }}
-      >
-        {`- ${author} -`}
-      </Voltra.Text>
-    </Voltra.VStack>
+        <Voltra.Text
+          numberOfLines={s.numberOfLines}
+          multilineTextAlignment="center"
+          style={{
+            width: "100%",
+            color: QUOTE_COLOR,
+            fontSize: s.quoteSize,
+            fontWeight: "600",
+            lineHeight: s.quoteLineHeight,
+            textAlign: "center",
+          }}
+        >
+          {text}
+        </Voltra.Text>
+        <Voltra.Text
+          multilineTextAlignment="center"
+          style={{
+            width: "100%",
+            color: AUTHOR_COLOR,
+            fontSize: s.authorSize,
+            fontWeight: "500",
+            textAlign: "center",
+          }}
+        >
+          {`- ${author} -`}
+        </Voltra.Text>
+      </Voltra.VStack>
+    </Voltra.ZStack>
   );
 }
 
-/** Renders the quote for both registered families (medium + large). */
+/**
+ * Renders the quote for both registered families (medium + large) using the
+ * user's saved style. Falls back to DEFAULT_QUOTE_STYLE when called without
+ * one (e.g. from the build-time initial state file).
+ */
 export function quoteWidgetVariants(
   text: string,
   author: string,
+  style: QuoteStyle = DEFAULT_QUOTE_STYLE,
 ): WidgetVariants {
   return {
-    systemMedium: quoteCard(text, author, MEDIUM),
-    systemLarge: quoteCard(text, author, LARGE),
+    systemMedium: quoteCard(text, author, style, MEDIUM),
+    systemLarge: quoteCard(text, author, style, LARGE),
   };
 }
