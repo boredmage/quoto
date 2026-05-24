@@ -56,6 +56,7 @@ export default function RootLayout() {
         <Stack.Screen name="language" />
         <Stack.Screen name="help-center" />
         <Stack.Screen name="collections" />
+        <Stack.Screen name="collection" />
         <Stack.Screen name="new-collection" />
         <Stack.Screen
           name="download"
