@@ -16,11 +16,19 @@ import { ArrowLeftIcon } from "../components/icons";
 import { PrimaryButton } from "../components/ui/PrimaryButton";
 import { Colors } from "../constants/colors";
 import { Fonts } from "../constants/fonts";
+import { useCollections } from "../store/collections";
 
 export default function NewCollection() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { createCollection } = useCollections();
   const [name, setName] = useState("");
+
+  const save = () => {
+    const trimmed = name.trim();
+    if (trimmed) createCollection(trimmed);
+    router.back();
+  };
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
@@ -52,7 +60,7 @@ export default function NewCollection() {
         </View>
 
         <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
-          <PrimaryButton title="Save" onPress={() => router.back()} />
+          <PrimaryButton title="Save" onPress={save} />
         </View>
       </KeyboardAvoidingView>
     </View>

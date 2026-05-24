@@ -1,3 +1,4 @@
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState, type ReactNode } from "react";
 import {
@@ -9,24 +10,23 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 
 import { ModalHeader } from "../components/ModalHeader";
 import { CheckCircleIcon } from "../components/icons";
 import { Slider } from "../components/ui/Slider";
 import { Colors } from "../constants/colors";
 import { Fonts } from "../constants/fonts";
-
-const THEME_BG = require("../assets/images/backgrounds/bg-main.jpg");
+import { getCurrentQuote } from "../services/quotePool";
+import {
+  FONTS,
+  SWATCHES,
+  THEMES,
+  sizeForSlider,
+  useQuoteStyle,
+} from "../store/quoteStyle";
 
 const APPEARANCES = ["Dark Yellow", "Dark Blue"];
-const SWATCHES = ["#000000", "#279e76", "#235183", "#796de2", "#822470"];
-const FONTS = [
-  { label: "Abcde", family: Fonts.inter.semibold },
-  { label: "Abcde", family: Fonts.monaSans.bold },
-  { label: "Abcde", family: Fonts.urbanist.bold },
-];
-// First theme is the neutral (solid) card; the rest use an image background.
-const THEMES = [null, THEME_BG, THEME_BG, THEME_BG];
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -39,11 +39,36 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 export default function Customize() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const { style, save } = useQuoteStyle();
+
+  // Quote to preview comes from wherever the user opened customise from
+  // (home, topic, download); falls back to the pool's current quote so the
+  // page is still meaningful if entered directly.
+  const params = useLocalSearchParams<{ text?: string; author?: string }>();
+  const current = getCurrentQuote();
+  const quote = {
+    text: params.text ?? current.text,
+    author: params.author ?? current.author,
+  };
+
+  // Seed local state from the saved style so reopening reflects the current
+  // selection; Save commits the local state back to the store.
   const [appearance, setAppearance] = useState(0);
-  const [theme, setTheme] = useState(0);
-  const [color, setColor] = useState(0);
-  const [font, setFont] = useState(0);
-  const [fontSize, setFontSize] = useState(50);
+  const [theme, setTheme] = useState(style.theme);
+  const [color, setColor] = useState(style.color);
+  const [font, setFont] = useState(style.font);
+  const [fontSize, setFontSize] = useState(style.fontSize);
+
+  const fontFamily = FONTS[font].family;
+  const quoteSize = sizeForSlider(fontSize);
+  const themeImage = THEMES[theme];
+  const solidBg = SWATCHES[color];
+
+  const handleSave = () => {
+    save({ theme, color, font, fontSize });
+    router.back();
+  };
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
@@ -57,6 +82,67 @@ export default function Customize() {
         ]}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.previewWrap}>
+          <View
+            style={[styles.card, !themeImage && { backgroundColor: solidBg }]}
+          >
+            {themeImage ? (
+              <>
+                <Image
+                  source={themeImage}
+                  style={styles.fill}
+                  resizeMode="cover"
+                />
+                <Svg style={styles.fill}>
+                  <Defs>
+                    <LinearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+                      <Stop offset="0" stopColor="#000000" stopOpacity="0.5" />
+                      <Stop
+                        offset="0.45"
+                        stopColor="#000000"
+                        stopOpacity="0.4"
+                      />
+                      <Stop offset="1" stopColor="#000000" stopOpacity="0.8" />
+                    </LinearGradient>
+                  </Defs>
+                  <Rect
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                    fill="url(#shade)"
+                  />
+                </Svg>
+              </>
+            ) : null}
+
+            <View style={styles.cardContent}>
+              <Text style={styles.mark}>“</Text>
+              <Text
+                style={[
+                  styles.quote,
+                  {
+                    fontFamily,
+                    fontSize: quoteSize,
+                    lineHeight: quoteSize * 1.4,
+                  },
+                ]}
+              >
+                {quote.text}
+              </Text>
+              <Text style={[styles.author, { fontFamily }]}>
+                - {quote.author} -
+              </Text>
+            </View>
+
+            <Text style={styles.watermark}>Quoto</Text>
+          </View>
+
+          <Pressable style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveText}>Save</Text>
+          </Pressable>
+        </View>
+
         <Section title="Appearance">
           <View style={styles.appearanceRow}>
             {APPEARANCES.map((label, i) => (
@@ -98,7 +184,7 @@ export default function Customize() {
               <Pressable
                 key={i}
                 onPress={() => setTheme(i)}
-                style={styles.themeCard}
+                style={[styles.themeCard, !bg && { backgroundColor: solidBg }]}
               >
                 {bg ? (
                   <>
@@ -209,6 +295,67 @@ const styles = StyleSheet.create({
   hList: {
     gap: 16,
     paddingRight: 16,
+  },
+  // Live preview
+  previewWrap: {
+    alignItems: "center",
+    gap: 16,
+  },
+  card: {
+    width: 300,
+    height: 420,
+    borderRadius: 16,
+    overflow: "hidden",
+    backgroundColor: Colors.background,
+  },
+  cardContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 28,
+    paddingTop: 32,
+    paddingBottom: 56,
+    gap: 12,
+  },
+  mark: {
+    fontFamily: Fonts.inter.bold,
+    fontSize: 56,
+    lineHeight: 56,
+    color: Colors.brand,
+  },
+  quote: {
+    textAlign: "center",
+    color: Colors.white,
+  },
+  author: {
+    fontSize: 14,
+    lineHeight: 14 * 1.4,
+    textAlign: "center",
+    color: "rgba(255, 255, 255, 0.85)",
+  },
+  watermark: {
+    position: "absolute",
+    bottom: 20,
+    left: 0,
+    right: 0,
+    textAlign: "center",
+    fontFamily: Fonts.inter.bold,
+    fontSize: 13,
+    letterSpacing: 2,
+    color: "rgba(255, 255, 255, 0.8)",
+  },
+  saveButton: {
+    width: 260,
+    height: 52,
+    borderRadius: 10,
+    backgroundColor: Colors.brand,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  saveText: {
+    fontFamily: Fonts.inter.medium,
+    fontSize: 16,
+    color: Colors.black,
   },
   // Appearance
   appearanceRow: {

@@ -1,5 +1,5 @@
+import { useLocalSearchParams, useRouter } from "expo-router";
 import * as Sharing from "expo-sharing";
-import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useRef } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -11,12 +11,20 @@ import { ModalHeader } from "../components/ModalHeader";
 import { BookmarkIcon, CopyIcon, PaletteIcon } from "../components/icons";
 import { Colors } from "../constants/colors";
 import { Fonts } from "../constants/fonts";
-import { CURRENT_QUOTE } from "../constants/quote";
+import { FALLBACK_QUOTES } from "../services/quotes";
 
 export default function Download() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const cardRef = useRef<View>(null);
+
+  // The quote to render/share is passed in via params (home, topic, a
+  // collection); fall back to a bundled quote if opened without one.
+  const params = useLocalSearchParams<{ text?: string; author?: string }>();
+  const quote = {
+    text: params.text ?? FALLBACK_QUOTES[0].text,
+    author: params.author ?? FALLBACK_QUOTES[0].author,
+  };
 
   const handleDownload = async () => {
     try {
@@ -37,13 +45,14 @@ export default function Download() {
       key: "customize",
       label: "Customize",
       Icon: PaletteIcon,
-      onPress: () => router.replace("/customize"),
+      onPress: () => router.replace({ pathname: "/customize", params: quote }),
     },
     {
       key: "add",
       label: "Add",
       Icon: BookmarkIcon,
-      onPress: () => router.replace("/collections"),
+      onPress: () =>
+        router.replace({ pathname: "/collections", params: quote }),
     },
     { key: "copy", label: "Copy text", Icon: CopyIcon, onPress: () => {} },
   ];
@@ -55,10 +64,7 @@ export default function Download() {
 
       <View style={styles.content}>
         <View ref={cardRef} collapsable={false}>
-          <DownloadableQuote
-            text={CURRENT_QUOTE.text}
-            author={CURRENT_QUOTE.author}
-          />
+          <DownloadableQuote text={quote.text} author={quote.author} />
         </View>
         <Pressable style={styles.downloadButton} onPress={handleDownload}>
           <Text style={styles.downloadText}>Download image</Text>
