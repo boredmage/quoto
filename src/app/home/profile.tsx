@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import type { ComponentProps, ReactNode } from "react";
 import {
@@ -23,17 +24,37 @@ const mdi = (name: MdiName) => (
   <MaterialCommunityIcons name={name} size={24} color={Colors.white} />
 );
 
-const MAIN_SETTINGS: { icon: ReactNode; label: string; value?: string }[] = [
+type Item = { icon: ReactNode; label: string; value?: string; route?: string };
+
+const MAIN_SETTINGS: Item[] = [
   { icon: mdi("account-circle-outline"), label: "Account settings" },
-  { icon: mdi("check-circle-outline"), label: "Topics you follow" },
-  { icon: mdi("bell-outline"), label: "Reminders" },
+  {
+    icon: mdi("check-circle-outline"),
+    label: "Topics you follow",
+    route: "/topics-follow",
+  },
+  { icon: mdi("bell-outline"), label: "Reminders", route: "/reminders" },
   { icon: mdi("volume-high"), label: "Theme sound" },
-  { icon: mdi("palette-outline"), label: "Appearance", value: "Dark Yellow" },
-  { icon: mdi("web"), label: "Language", value: "English" },
+  {
+    icon: mdi("palette-outline"),
+    label: "Appearance",
+    value: "Dark Yellow",
+    route: "/appearance",
+  },
+  {
+    icon: mdi("web"),
+    label: "Language",
+    value: "English",
+    route: "/language",
+  },
 ];
 
-const OTHER: { icon: ReactNode; label: string }[] = [
-  { icon: mdi("help-circle-outline"), label: "Help center" },
+const OTHER: Item[] = [
+  {
+    icon: mdi("help-circle-outline"),
+    label: "Help center",
+    route: "/help-center",
+  },
   { icon: mdi("shield-outline"), label: "Security" },
   { icon: mdi("information-outline"), label: "About the app" },
   { icon: mdi("account-plus-outline"), label: "Invite friends" },
@@ -44,15 +65,22 @@ function Row({
   icon,
   label,
   value,
+  route,
   last,
 }: {
   icon: ReactNode;
   label: string;
   value?: string;
+  route?: string;
   last?: boolean;
 }) {
+  const router = useRouter();
   return (
-    <Pressable style={[styles.row, !last && styles.rowBorder]}>
+    <Pressable
+      style={[styles.row, !last && styles.rowBorder]}
+      disabled={!route}
+      onPress={() => route && router.push(route)}
+    >
       <View style={styles.rowIcon}>{icon}</View>
       <Text style={styles.rowLabel}>{label}</Text>
       {value ? <Text style={styles.rowValue}>{value}</Text> : null}
@@ -65,13 +93,7 @@ function Row({
   );
 }
 
-function Section({
-  title,
-  items,
-}: {
-  title: string;
-  items: { icon: ReactNode; label: string; value?: string }[];
-}) {
+function Section({ title, items }: { title: string; items: Item[] }) {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionLabel}>{title}</Text>
@@ -82,6 +104,7 @@ function Section({
             icon={item.icon}
             label={item.label}
             value={item.value}
+            route={item.route}
             last={i === items.length - 1}
           />
         ))}
@@ -92,6 +115,7 @@ function Section({
 
 export default function Profile() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
@@ -105,7 +129,7 @@ export default function Profile() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.subCard}>
+        <Pressable style={styles.subCard} onPress={() => router.push("/pro")}>
           <Svg style={StyleSheet.absoluteFill}>
             <Defs>
               <LinearGradient id="sub" x1="0" y1="0" x2="1" y2="0">
@@ -120,7 +144,7 @@ export default function Profile() {
           <Text style={styles.subText}>
             {"Access all categories, quotes,\nthemes!"}
           </Text>
-        </View>
+        </Pressable>
 
         <Section title="MAIN SETTINGS" items={MAIN_SETTINGS} />
         <Section title="OTHER" items={OTHER} />
