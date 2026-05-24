@@ -37,6 +37,21 @@
           "imageWidth": 60,
           "resizeMode": "contain"
         }
+      ],
+      [
+        "voltra",
+        {
+          "groupIdentifier": "group.com.qudusayo.quoto",
+          "widgets": [
+            {
+              "id": "quotes",
+              "displayName": "Quotes",
+              "description": "A quote from Quoto on your home screen",
+              "supportedFamilies": ["systemMedium", "systemLarge"],
+              "initialStatePath": "./src/widgets/quote-initial.tsx"
+            }
+          ]
+        }
       ]
     ],
     "name": "Quoto",

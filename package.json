@@ -21,7 +21,8 @@
     "react-native-svg": "15.15.4",
     "react-native-view-shot": "5.1.0",
     "tailwindcss": "~4.1.16",
-    "uniwind": "~1.0.0"
+    "uniwind": "~1.0.0",
+    "voltra": "^1.4.1"
   },
   "devDependencies": {
     "@types/react": "~19.2.14",
