@@ -6,8 +6,9 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Colors } from "../../constants/colors";
-import { COLLECTIONS } from "../../constants/collections";
 import { Fonts } from "../../constants/fonts";
+import { useCollections } from "../../store/collections";
+import { useFavorites } from "../../store/favorites";
 
 const TABS = ["Collections", "Favorites"] as const;
 type Tab = (typeof TABS)[number];
@@ -16,6 +17,8 @@ export default function Library() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [tab, setTab] = useState<Tab>("Collections");
+  const { collections } = useCollections();
+  const { favorites } = useFavorites();
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
@@ -56,7 +59,7 @@ export default function Library() {
         {tab === "Collections" ? (
           <>
             <View style={styles.list}>
-              {COLLECTIONS.map((c) => (
+              {collections.map((c) => (
                 <Pressable
                   key={c.id}
                   style={styles.card}
@@ -94,9 +97,27 @@ export default function Library() {
               <Text style={styles.createText}>Create new collection</Text>
             </Pressable>
           </>
-        ) : (
+        ) : favorites.length === 0 ? (
           <View style={styles.empty}>
             <Text style={styles.emptyText}>No favorites yet</Text>
+          </View>
+        ) : (
+          <View style={styles.list}>
+            {favorites.map((q) => (
+              <Pressable
+                key={q.id}
+                style={styles.favCard}
+                onPress={() =>
+                  router.push({
+                    pathname: "/download",
+                    params: { text: q.text, author: q.author },
+                  })
+                }
+              >
+                <Text style={styles.favQuote}>{q.text}</Text>
+                <Text style={styles.favAuthor}>- {q.author}</Text>
+              </Pressable>
+            ))}
           </View>
         )}
       </ScrollView>
@@ -174,6 +195,23 @@ const styles = StyleSheet.create({
   cardCount: {
     fontFamily: Fonts.inter.regular,
     fontSize: 12,
+    color: Colors.textVariant,
+  },
+  favCard: {
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: Colors.surface,
+    gap: 8,
+  },
+  favQuote: {
+    fontFamily: Fonts.inter.medium,
+    fontSize: 16,
+    lineHeight: 16 * 1.4,
+    color: Colors.white,
+  },
+  favAuthor: {
+    fontFamily: Fonts.inter.regular,
+    fontSize: 14,
     color: Colors.textVariant,
   },
   createButton: {

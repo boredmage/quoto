@@ -1,11 +1,13 @@
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Colors } from "../constants/colors";
 import { Fonts } from "../constants/fonts";
+import { useFavorites } from "../store/favorites";
+import type { Quote } from "../types/quote";
 import {
   ChevronLeftIcon,
   DownloadIcon,
@@ -17,8 +19,7 @@ import {
 const BG = require("../assets/images/backgrounds/bg-main.jpg");
 
 type QuoteViewProps = {
-  text: string;
-  author: string;
+  quote: Quote;
   /** Icon shown in the bottom-left button (layout-grid on home, the topic icon on a topic). */
   leftIcon: ReactNode;
   /** Label for the bottom-left button (e.g. "Topics" or a topic name). */
@@ -33,13 +34,12 @@ type QuoteViewProps = {
 
 /**
  * The full-screen quote view: background image + dark overlay, a centered
- * quote with download/heart/share actions, and a bottom row with a labelled
+ * quote with download/favourite/add actions, and a bottom row with a labelled
  * button (left) and the customize palette (right). Shared by the home tab and
  * the per-topic screen.
  */
 export function QuoteView({
-  text,
-  author,
+  quote,
   leftIcon,
   leftLabel,
   onLeftPress,
@@ -48,7 +48,10 @@ export function QuoteView({
 }: QuoteViewProps) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [favorited, setFavorited] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const favorited = isFavorite(quote.id);
+
+  const quoteParams = { text: quote.text, author: quote.author };
 
   return (
     <View style={styles.root}>
@@ -73,17 +76,24 @@ export function QuoteView({
         <View style={styles.content}>
           <View style={styles.quote}>
             <View style={styles.textBlock}>
-              <Text style={styles.quoteText}>{text}</Text>
-              <Text style={styles.author}>- {author} -</Text>
+              <Text style={styles.quoteText}>{quote.text}</Text>
+              <Text style={styles.author}>- {quote.author} -</Text>
             </View>
 
             <View style={styles.actions}>
-              <Pressable hitSlop={8} onPress={() => router.push("/download")}>
+              <Pressable
+                hitSlop={8}
+                onPress={() =>
+                  router.push({ pathname: "/download", params: quoteParams })
+                }
+                accessibilityRole="button"
+                accessibilityLabel="Download quote"
+              >
                 <DownloadIcon size={24} color={Colors.white} />
               </Pressable>
               <Pressable
                 hitSlop={8}
-                onPress={() => setFavorited((f) => !f)}
+                onPress={() => toggleFavorite(quote)}
                 accessibilityRole="button"
                 accessibilityLabel={favorited ? "Unfavorite" : "Favorite"}
                 accessibilityState={{ selected: favorited }}
@@ -96,7 +106,11 @@ export function QuoteView({
               </Pressable>
               <Pressable
                 hitSlop={8}
-                onPress={() => router.push("/collections")}
+                onPress={() =>
+                  router.push({ pathname: "/collections", params: quoteParams })
+                }
+                accessibilityRole="button"
+                accessibilityLabel="Add to collection"
               >
                 <FilePlusIcon size={24} color={Colors.white} />
               </Pressable>

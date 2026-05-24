@@ -5,12 +5,13 @@ import { QuoteView } from "../components/QuoteView";
 import { LayoutGridIcon } from "../components/icons";
 import { CATEGORIES } from "../constants/categories";
 import { Colors } from "../constants/colors";
-import { CURRENT_QUOTE } from "../constants/quote";
+import { useTopicQuote } from "../hooks/useQuotes";
 
 export default function Topic() {
   const router = useRouter();
   const { name } = useLocalSearchParams<{ name?: string }>();
   const category = CATEGORIES.find((c) => c.name === name);
+  const { quote } = useTopicQuote(name ?? "");
 
   const icon = category ? (
     <Svg
@@ -33,8 +34,7 @@ export default function Topic() {
 
   return (
     <QuoteView
-      text={CURRENT_QUOTE.text}
-      author={CURRENT_QUOTE.author}
+      quote={quote}
       leftIcon={icon}
       leftLabel={name ?? "Topics"}
       onBack={() => router.back()}
