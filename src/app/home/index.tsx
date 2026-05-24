@@ -1,23 +1,17 @@
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
-import { Platform } from "react-native";
 
 import { QuoteView } from "../../components/QuoteView";
 import { LayoutGridIcon } from "../../components/icons";
 import { Colors } from "../../constants/colors";
 import { useRandomQuote } from "../../hooks/useQuotes";
-import { updateQuoteWidget } from "../../widgets/updateQuoteWidget";
+import { usePushQuoteWidget } from "../../widgets/usePushQuoteWidget";
 
 export default function Home() {
   const router = useRouter();
   const { quote } = useRandomQuote();
 
-  // Keep the home-screen widget(s) in sync with the current quote. iOS-only
-  // and a silent no-op in binaries without Voltra (see updateQuoteWidget).
-  useEffect(() => {
-    if (Platform.OS !== "ios") return;
-    updateQuoteWidget(quote.text, quote.author).catch(() => {});
-  }, [quote.text, quote.author]);
+  // Mirror the current quote + saved Customize style to any installed widget.
+  usePushQuoteWidget(quote.text, quote.author);
 
   return (
     <QuoteView

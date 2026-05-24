@@ -44,8 +44,9 @@ export const FONTS = [
  * DownloadableQuote. Index 0 is the neutral solid (renders the chosen
  * SWATCHES colour, no image); the rest are background images.
  *
- * To add a theme: drop a JPG into `src/assets/images/backgrounds/` and append a
- * new `require()` entry below.
+ * To add a theme: drop a JPG into both `src/assets/images/backgrounds/` (the
+ * app bundle) AND `assets/voltra/` (the iOS widget extension bundle), then
+ * append a parallel entry to both arrays below.
  */
 export const THEMES: (ImageSourcePropType | null)[] = [
   null,
@@ -53,6 +54,19 @@ export const THEMES: (ImageSourcePropType | null)[] = [
   require("../assets/images/backgrounds/theme-bg-1.jpg"),
   require("../assets/images/backgrounds/theme-bg-2.jpg"),
   require("../assets/images/backgrounds/theme-bg-3.jpg"),
+];
+
+/**
+ * The same theme images as `THEMES`, but expressed as Voltra widget asset
+ * names (files under `assets/voltra/`). Indexes line up with THEMES so the
+ * widget renders the same picture the user picked in Customize.
+ */
+export const THEME_WIDGET_ASSETS: (string | null)[] = [
+  null,
+  "bg-main.jpg",
+  "theme-bg-1.jpg",
+  "theme-bg-2.jpg",
+  "theme-bg-3.jpg",
 ];
 
 const MIN_FONT = 14;
