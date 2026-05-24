@@ -134,7 +134,9 @@ export function QuoteView({
           </Pressable>
           <Pressable
             style={styles.iconButton}
-            onPress={() => router.push("/customize")}
+            onPress={() =>
+              router.push({ pathname: "/customize", params: quoteParams })
+            }
           >
             <PaletteIcon size={24} color={Colors.white} />
           </Pressable>

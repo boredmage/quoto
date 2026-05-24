@@ -45,7 +45,7 @@ export default function Download() {
       key: "customize",
       label: "Customize",
       Icon: PaletteIcon,
-      onPress: () => router.replace("/customize"),
+      onPress: () => router.replace({ pathname: "/customize", params: quote }),
     },
     {
       key: "add",
