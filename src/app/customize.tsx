@@ -1,5 +1,7 @@
+import { useLocalSearchParams } from "expo-router";
+import * as Sharing from "expo-sharing";
 import { StatusBar } from "expo-status-bar";
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import {
   Image,
   Pressable,
@@ -9,24 +11,34 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
+import { captureRef } from "react-native-view-shot";
 
 import { ModalHeader } from "../components/ModalHeader";
 import { CheckCircleIcon } from "../components/icons";
 import { Slider } from "../components/ui/Slider";
 import { Colors } from "../constants/colors";
 import { Fonts } from "../constants/fonts";
+import { getCurrentQuote } from "../services/quotePool";
 
 const THEME_BG = require("../assets/images/backgrounds/bg-main.jpg");
 
 const APPEARANCES = ["Dark Yellow", "Dark Blue"];
-const SWATCHES = ["#000000", "#279e76", "#235183", "#796de2", "#822470"];
+const SWATCHES = ["#0f0f0f", "#279e76", "#235183", "#796de2", "#822470"];
 const FONTS = [
   { label: "Abcde", family: Fonts.inter.semibold },
   { label: "Abcde", family: Fonts.monaSans.bold },
   { label: "Abcde", family: Fonts.urbanist.bold },
 ];
-// First theme is the neutral (solid) card; the rest use an image background.
-const THEMES = [null, THEME_BG, THEME_BG, THEME_BG];
+// First theme is the neutral (solid colour, driven by the swatch picker); the
+// rest use the share-background image with a legibility gradient.
+const THEMES: (number | null)[] = [null, THEME_BG, THEME_BG, THEME_BG];
+
+// Slider is 0–100 — map linearly to a sensible point-size range for the quote.
+const MIN_FONT = 14;
+const MAX_FONT = 30;
+const sizeForSlider = (v: number) =>
+  Math.round(MIN_FONT + (MAX_FONT - MIN_FONT) * (v / 100));
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -39,11 +51,42 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 export default function Customize() {
   const insets = useSafeAreaInsets();
+  const cardRef = useRef<View>(null);
+
+  // Quote to customise comes from wherever the user opened customise from
+  // (home, topic, download). Falls back to the pool's current quote so the
+  // page is still meaningful if entered directly.
+  const params = useLocalSearchParams<{ text?: string; author?: string }>();
+  const current = getCurrentQuote();
+  const quote = {
+    text: params.text ?? current.text,
+    author: params.author ?? current.author,
+  };
+
   const [appearance, setAppearance] = useState(0);
   const [theme, setTheme] = useState(0);
   const [color, setColor] = useState(0);
   const [font, setFont] = useState(0);
   const [fontSize, setFontSize] = useState(50);
+
+  const fontFamily = FONTS[font].family;
+  const quoteSize = sizeForSlider(fontSize);
+  const themeImage = THEMES[theme];
+  const solidBg = SWATCHES[color];
+
+  const share = async () => {
+    try {
+      const uri = await captureRef(cardRef, { format: "png", quality: 1 });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, {
+          mimeType: "image/png",
+          dialogTitle: "Save or share quote",
+        });
+      }
+    } catch {
+      // capture/share cancelled or unavailable — nothing to do
+    }
+  };
 
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
@@ -57,6 +100,69 @@ export default function Customize() {
         ]}
         showsVerticalScrollIndicator={false}
       >
+        <View style={styles.previewWrap}>
+          <View
+            ref={cardRef}
+            collapsable={false}
+            style={[styles.card, !themeImage && { backgroundColor: solidBg }]}
+          >
+            {themeImage ? (
+              <>
+                <Image
+                  source={themeImage}
+                  style={styles.fill}
+                  resizeMode="cover"
+                />
+                <Svg style={styles.fill}>
+                  <Defs>
+                    <LinearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+                      <Stop offset="0" stopColor="#000000" stopOpacity="0.5" />
+                      <Stop
+                        offset="0.45"
+                        stopColor="#000000"
+                        stopOpacity="0.4"
+                      />
+                      <Stop offset="1" stopColor="#000000" stopOpacity="0.8" />
+                    </LinearGradient>
+                  </Defs>
+                  <Rect
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                    fill="url(#shade)"
+                  />
+                </Svg>
+              </>
+            ) : null}
+
+            <View style={styles.cardContent}>
+              <Text style={styles.mark}>“</Text>
+              <Text
+                style={[
+                  styles.quote,
+                  {
+                    fontFamily,
+                    fontSize: quoteSize,
+                    lineHeight: quoteSize * 1.4,
+                  },
+                ]}
+              >
+                {quote.text}
+              </Text>
+              <Text style={[styles.author, { fontFamily }]}>
+                - {quote.author} -
+              </Text>
+            </View>
+
+            <Text style={styles.watermark}>Quoto</Text>
+          </View>
+
+          <Pressable style={styles.shareButton} onPress={share}>
+            <Text style={styles.shareText}>Share</Text>
+          </Pressable>
+        </View>
+
         <Section title="Appearance">
           <View style={styles.appearanceRow}>
             {APPEARANCES.map((label, i) => (
@@ -98,7 +204,7 @@ export default function Customize() {
               <Pressable
                 key={i}
                 onPress={() => setTheme(i)}
-                style={styles.themeCard}
+                style={[styles.themeCard, !bg && { backgroundColor: solidBg }]}
               >
                 {bg ? (
                   <>
@@ -209,6 +315,67 @@ const styles = StyleSheet.create({
   hList: {
     gap: 16,
     paddingRight: 16,
+  },
+  // Live preview (matches the DownloadableQuote share card)
+  previewWrap: {
+    alignItems: "center",
+    gap: 16,
+  },
+  card: {
+    width: 300,
+    height: 420,
+    borderRadius: 16,
+    overflow: "hidden",
+    backgroundColor: Colors.background,
+  },
+  cardContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 28,
+    paddingTop: 32,
+    paddingBottom: 56,
+    gap: 12,
+  },
+  mark: {
+    fontFamily: Fonts.inter.bold,
+    fontSize: 56,
+    lineHeight: 56,
+    color: Colors.brand,
+  },
+  quote: {
+    textAlign: "center",
+    color: Colors.white,
+  },
+  author: {
+    fontSize: 14,
+    lineHeight: 14 * 1.4,
+    textAlign: "center",
+    color: "rgba(255, 255, 255, 0.85)",
+  },
+  watermark: {
+    position: "absolute",
+    bottom: 20,
+    left: 0,
+    right: 0,
+    textAlign: "center",
+    fontFamily: Fonts.inter.bold,
+    fontSize: 13,
+    letterSpacing: 2,
+    color: "rgba(255, 255, 255, 0.8)",
+  },
+  shareButton: {
+    width: 260,
+    height: 52,
+    borderRadius: 10,
+    backgroundColor: Colors.brand,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  shareText: {
+    fontFamily: Fonts.inter.medium,
+    fontSize: 16,
+    color: Colors.black,
   },
   // Appearance
   appearanceRow: {
