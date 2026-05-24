@@ -21,16 +21,12 @@ import { getCurrentQuote } from "../services/quotePool";
 import {
   FONTS,
   SWATCHES,
+  THEMES,
   sizeForSlider,
   useQuoteStyle,
 } from "../store/quoteStyle";
 
-const THEME_BG = require("../assets/images/backgrounds/bg-main.jpg");
-
 const APPEARANCES = ["Dark Yellow", "Dark Blue"];
-// First theme is the neutral (solid colour, driven by the swatch picker); the
-// rest use the share-background image with a legibility gradient.
-const THEMES: (number | null)[] = [null, THEME_BG, THEME_BG, THEME_BG];
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (

@@ -10,6 +10,7 @@ import { useFavorites } from "../store/favorites";
 import {
   FONTS,
   SWATCHES,
+  THEMES,
   sizeForSlider,
   useQuoteStyle,
 } from "../store/quoteStyle";
@@ -21,8 +22,6 @@ import {
   HeartIcon,
   PaletteIcon,
 } from "./icons";
-
-const BG = require("../assets/images/backgrounds/bg-main.jpg");
 
 type QuoteViewProps = {
   quote: Quote;
@@ -60,15 +59,15 @@ export function QuoteView({
   const quoteParams = { text: quote.text, author: quote.author };
   const fontFamily = FONTS[style.font].family;
   const quoteSize = sizeForSlider(style.fontSize);
-  const useImageBg = style.theme !== 0;
+  const themeImage = THEMES[style.theme];
   const solidBg = SWATCHES[style.color];
 
   return (
-    <View style={[styles.root, !useImageBg && { backgroundColor: solidBg }]}>
+    <View style={[styles.root, !themeImage && { backgroundColor: solidBg }]}>
       <StatusBar style="light" />
-      {useImageBg ? (
+      {themeImage ? (
         <>
-          <Image source={BG} style={styles.bg} resizeMode="cover" />
+          <Image source={themeImage} style={styles.bg} resizeMode="cover" />
           <View style={styles.overlay} />
         </>
       ) : null}

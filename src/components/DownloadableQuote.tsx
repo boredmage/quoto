@@ -6,11 +6,10 @@ import { Fonts } from "../constants/fonts";
 import {
   FONTS,
   SWATCHES,
+  THEMES,
   sizeForSlider,
   useQuoteStyle,
 } from "../store/quoteStyle";
-
-const BG = require("../assets/images/backgrounds/bg-main.jpg");
 
 type DownloadableQuoteProps = {
   text: string;
@@ -27,14 +26,14 @@ export function DownloadableQuote({ text, author }: DownloadableQuoteProps) {
   const { style } = useQuoteStyle();
   const fontFamily = FONTS[style.font].family;
   const quoteSize = sizeForSlider(style.fontSize);
-  const useImageBg = style.theme !== 0;
+  const themeImage = THEMES[style.theme];
   const solidBg = SWATCHES[style.color];
 
   return (
-    <View style={[styles.card, !useImageBg && { backgroundColor: solidBg }]}>
-      {useImageBg ? (
+    <View style={[styles.card, !themeImage && { backgroundColor: solidBg }]}>
+      {themeImage ? (
         <>
-          <Image source={BG} style={styles.fill} resizeMode="cover" />
+          <Image source={themeImage} style={styles.fill} resizeMode="cover" />
           <Svg style={styles.fill}>
             <Defs>
               <LinearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
