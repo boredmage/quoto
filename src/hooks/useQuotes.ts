@@ -1,47 +1,35 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSyncExternalStore } from "react";
 
 import {
-  FALLBACK_QUOTES,
-  fetchRandomQuote,
-  fetchTopicQuote,
-} from "../services/quotes";
-import type { Quote } from "../types/quote";
+  advanceQuote,
+  getCurrentQuote,
+  getQuoteForTopic,
+  subscribeQuotePool,
+} from "../services/quotePool";
 
-function fallbackFor(seed: string): Quote {
-  let h = 0;
-  for (let i = 0; i < seed.length; i++)
-    h = (h + seed.charCodeAt(i)) % FALLBACK_QUOTES.length;
-  return FALLBACK_QUOTES[h];
-}
-
-/** Random quote for the home screen. Falls back to a bundled quote on error. */
+/**
+ * The current quote, read synchronously from the prefetched pool (hydrated
+ * during the splash). Re-renders when the pool advances or refills.
+ */
 export function useRandomQuote() {
-  const query = useQuery({
-    queryKey: ["quote", "random"],
-    queryFn: fetchRandomQuote,
-  });
-  return {
-    quote: query.data ?? FALLBACK_QUOTES[0],
-    isLoading: query.isLoading,
-    isError: query.isError,
-    refetch: query.refetch,
-  };
+  const quote = useSyncExternalStore(
+    subscribeQuotePool,
+    getCurrentQuote,
+    getCurrentQuote,
+  );
+  return { quote, next: advanceQuote };
 }
 
 /**
- * Quote for a topic (cached per topic so revisiting renders instantly). Falls
- * back to a bundled quote on error.
+ * A stable quote for a topic, hashed into the pool. Same topic → same quote
+ * until the pool refills. Synchronous (no loading state).
  */
 export function useTopicQuote(topic: string) {
-  const query = useQuery({
-    queryKey: ["quote", "topic", topic],
-    queryFn: () => fetchTopicQuote(topic),
-    enabled: topic.length > 0,
-  });
-  return {
-    quote: query.data ?? fallbackFor(topic),
-    isLoading: query.isLoading,
-    isError: query.isError,
-    refetch: query.refetch,
-  };
+  const getSnapshot = () => getQuoteForTopic(topic);
+  const quote = useSyncExternalStore(
+    subscribeQuotePool,
+    getSnapshot,
+    getSnapshot,
+  );
+  return { quote };
 }
