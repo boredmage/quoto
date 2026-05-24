@@ -1,4 +1,4 @@
-import type { QuoteStyle } from "../store/quoteStyle";
+import type { QuoteStyle } from "../store/quoteStyleConstants";
 
 /** Must match the widget `id` registered in the Voltra plugin (app.json). */
 export const QUOTE_WIDGET_ID = "quotes";

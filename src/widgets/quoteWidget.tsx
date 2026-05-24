@@ -1,11 +1,14 @@
 import { Voltra, type WidgetVariants } from "voltra";
 
+// Import from the pure constants file (not the Provider), so the build-time
+// widget prerender doesn't transitively pull react-native / AsyncStorage and
+// crash on TypeScript types it can't transpile.
 import {
   DEFAULT_QUOTE_STYLE,
   SWATCHES,
   THEME_WIDGET_ASSETS,
   type QuoteStyle,
-} from "../store/quoteStyle";
+} from "../store/quoteStyleConstants";
 
 const QUOTE_COLOR = "#ffffff";
 const AUTHOR_COLOR = "rgba(255, 255, 255, 0.85)";
