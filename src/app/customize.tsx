@@ -1,7 +1,6 @@
-import { useLocalSearchParams } from "expo-router";
-import * as Sharing from "expo-sharing";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   Image,
   Pressable,
@@ -12,7 +11,6 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
-import { captureRef } from "react-native-view-shot";
 
 import { ModalHeader } from "../components/ModalHeader";
 import { CheckCircleIcon } from "../components/icons";
@@ -20,25 +18,19 @@ import { Slider } from "../components/ui/Slider";
 import { Colors } from "../constants/colors";
 import { Fonts } from "../constants/fonts";
 import { getCurrentQuote } from "../services/quotePool";
+import {
+  FONTS,
+  SWATCHES,
+  sizeForSlider,
+  useQuoteStyle,
+} from "../store/quoteStyle";
 
 const THEME_BG = require("../assets/images/backgrounds/bg-main.jpg");
 
 const APPEARANCES = ["Dark Yellow", "Dark Blue"];
-const SWATCHES = ["#0f0f0f", "#279e76", "#235183", "#796de2", "#822470"];
-const FONTS = [
-  { label: "Abcde", family: Fonts.inter.semibold },
-  { label: "Abcde", family: Fonts.monaSans.bold },
-  { label: "Abcde", family: Fonts.urbanist.bold },
-];
 // First theme is the neutral (solid colour, driven by the swatch picker); the
 // rest use the share-background image with a legibility gradient.
 const THEMES: (number | null)[] = [null, THEME_BG, THEME_BG, THEME_BG];
-
-// Slider is 0–100 — map linearly to a sensible point-size range for the quote.
-const MIN_FONT = 14;
-const MAX_FONT = 30;
-const sizeForSlider = (v: number) =>
-  Math.round(MIN_FONT + (MAX_FONT - MIN_FONT) * (v / 100));
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -51,10 +43,11 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 export default function Customize() {
   const insets = useSafeAreaInsets();
-  const cardRef = useRef<View>(null);
+  const router = useRouter();
+  const { style, save } = useQuoteStyle();
 
-  // Quote to customise comes from wherever the user opened customise from
-  // (home, topic, download). Falls back to the pool's current quote so the
+  // Quote to preview comes from wherever the user opened customise from
+  // (home, topic, download); falls back to the pool's current quote so the
   // page is still meaningful if entered directly.
   const params = useLocalSearchParams<{ text?: string; author?: string }>();
   const current = getCurrentQuote();
@@ -63,29 +56,22 @@ export default function Customize() {
     author: params.author ?? current.author,
   };
 
+  // Seed local state from the saved style so reopening reflects the current
+  // selection; Save commits the local state back to the store.
   const [appearance, setAppearance] = useState(0);
-  const [theme, setTheme] = useState(0);
-  const [color, setColor] = useState(0);
-  const [font, setFont] = useState(0);
-  const [fontSize, setFontSize] = useState(50);
+  const [theme, setTheme] = useState(style.theme);
+  const [color, setColor] = useState(style.color);
+  const [font, setFont] = useState(style.font);
+  const [fontSize, setFontSize] = useState(style.fontSize);
 
   const fontFamily = FONTS[font].family;
   const quoteSize = sizeForSlider(fontSize);
   const themeImage = THEMES[theme];
   const solidBg = SWATCHES[color];
 
-  const share = async () => {
-    try {
-      const uri = await captureRef(cardRef, { format: "png", quality: 1 });
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(uri, {
-          mimeType: "image/png",
-          dialogTitle: "Save or share quote",
-        });
-      }
-    } catch {
-      // capture/share cancelled or unavailable — nothing to do
-    }
+  const handleSave = () => {
+    save({ theme, color, font, fontSize });
+    router.back();
   };
 
   return (
@@ -102,8 +88,6 @@ export default function Customize() {
       >
         <View style={styles.previewWrap}>
           <View
-            ref={cardRef}
-            collapsable={false}
             style={[styles.card, !themeImage && { backgroundColor: solidBg }]}
           >
             {themeImage ? (
@@ -158,8 +142,8 @@ export default function Customize() {
             <Text style={styles.watermark}>Quoto</Text>
           </View>
 
-          <Pressable style={styles.shareButton} onPress={share}>
-            <Text style={styles.shareText}>Share</Text>
+          <Pressable style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveText}>Save</Text>
           </Pressable>
         </View>
 
@@ -316,7 +300,7 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingRight: 16,
   },
-  // Live preview (matches the DownloadableQuote share card)
+  // Live preview
   previewWrap: {
     alignItems: "center",
     gap: 16,
@@ -364,7 +348,7 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     color: "rgba(255, 255, 255, 0.8)",
   },
-  shareButton: {
+  saveButton: {
     width: 260,
     height: 52,
     borderRadius: 10,
@@ -372,7 +356,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  shareText: {
+  saveText: {
     fontFamily: Fonts.inter.medium,
     fontSize: 16,
     color: Colors.black,

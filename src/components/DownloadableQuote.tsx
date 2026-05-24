@@ -3,6 +3,12 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 
 import { Colors } from "../constants/colors";
 import { Fonts } from "../constants/fonts";
+import {
+  FONTS,
+  SWATCHES,
+  sizeForSlider,
+  useQuoteStyle,
+} from "../store/quoteStyle";
 
 const BG = require("../assets/images/backgrounds/bg-main.jpg");
 
@@ -12,30 +18,51 @@ type DownloadableQuoteProps = {
 };
 
 /**
- * The quote rendered as a polished, shareable card: background image with a
- * legibility gradient, a brand quote mark, the quote + author, and a "Quoto"
- * watermark. Captured as a PNG by the download screen.
+ * The quote rendered as a polished, shareable card. Applies the global quote
+ * style saved in Customize (theme background, font family, font size) so what
+ * the user sees in Customize is what they share. Captured as a PNG by the
+ * download screen.
  */
 export function DownloadableQuote({ text, author }: DownloadableQuoteProps) {
-  return (
-    <View style={styles.card}>
-      <Image source={BG} style={styles.fill} resizeMode="cover" />
+  const { style } = useQuoteStyle();
+  const fontFamily = FONTS[style.font].family;
+  const quoteSize = sizeForSlider(style.fontSize);
+  const useImageBg = style.theme !== 0;
+  const solidBg = SWATCHES[style.color];
 
-      <Svg style={styles.fill}>
-        <Defs>
-          <LinearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0" stopColor="#000000" stopOpacity="0.5" />
-            <Stop offset="0.45" stopColor="#000000" stopOpacity="0.4" />
-            <Stop offset="1" stopColor="#000000" stopOpacity="0.8" />
-          </LinearGradient>
-        </Defs>
-        <Rect x="0" y="0" width="100%" height="100%" fill="url(#shade)" />
-      </Svg>
+  return (
+    <View style={[styles.card, !useImageBg && { backgroundColor: solidBg }]}>
+      {useImageBg ? (
+        <>
+          <Image source={BG} style={styles.fill} resizeMode="cover" />
+          <Svg style={styles.fill}>
+            <Defs>
+              <LinearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+                <Stop offset="0" stopColor="#000000" stopOpacity="0.5" />
+                <Stop offset="0.45" stopColor="#000000" stopOpacity="0.4" />
+                <Stop offset="1" stopColor="#000000" stopOpacity="0.8" />
+              </LinearGradient>
+            </Defs>
+            <Rect x="0" y="0" width="100%" height="100%" fill="url(#shade)" />
+          </Svg>
+        </>
+      ) : null}
 
       <View style={styles.content}>
         <Text style={styles.mark}>“</Text>
-        <Text style={styles.quote}>{text}</Text>
-        <Text style={styles.author}>- {author} -</Text>
+        <Text
+          style={[
+            styles.quote,
+            {
+              fontFamily,
+              fontSize: quoteSize,
+              lineHeight: quoteSize * 1.4,
+            },
+          ]}
+        >
+          {text}
+        </Text>
+        <Text style={[styles.author, { fontFamily }]}>- {author} -</Text>
       </View>
 
       <Text style={styles.watermark}>Quoto</Text>
@@ -76,14 +103,10 @@ const styles = StyleSheet.create({
     color: Colors.brand,
   },
   quote: {
-    fontFamily: Fonts.inter.semibold,
-    fontSize: 20,
-    lineHeight: 20 * 1.4,
     textAlign: "center",
     color: Colors.white,
   },
   author: {
-    fontFamily: Fonts.inter.medium,
     fontSize: 14,
     lineHeight: 14 * 1.4,
     textAlign: "center",

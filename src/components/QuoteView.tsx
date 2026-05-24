@@ -7,6 +7,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "../constants/colors";
 import { Fonts } from "../constants/fonts";
 import { useFavorites } from "../store/favorites";
+import {
+  FONTS,
+  SWATCHES,
+  sizeForSlider,
+  useQuoteStyle,
+} from "../store/quoteStyle";
 import type { Quote } from "../types/quote";
 import {
   ChevronLeftIcon,
@@ -33,10 +39,9 @@ type QuoteViewProps = {
 };
 
 /**
- * The full-screen quote view: background image + dark overlay, a centered
- * quote with download/favourite/add actions, and a bottom row with a labelled
- * button (left) and the customize palette (right). Shared by the home tab and
- * the per-topic screen.
+ * The full-screen quote view: background (image with dark overlay, or the
+ * solid colour the user picked in Customize), a centered quote in the chosen
+ * font/size, action buttons, and a bottom row. Shared by Home and Topic.
  */
 export function QuoteView({
   quote,
@@ -49,15 +54,24 @@ export function QuoteView({
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { style } = useQuoteStyle();
   const favorited = isFavorite(quote.id);
 
   const quoteParams = { text: quote.text, author: quote.author };
+  const fontFamily = FONTS[style.font].family;
+  const quoteSize = sizeForSlider(style.fontSize);
+  const useImageBg = style.theme !== 0;
+  const solidBg = SWATCHES[style.color];
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, !useImageBg && { backgroundColor: solidBg }]}>
       <StatusBar style="light" />
-      <Image source={BG} style={styles.bg} resizeMode="cover" />
-      <View style={styles.overlay} />
+      {useImageBg ? (
+        <>
+          <Image source={BG} style={styles.bg} resizeMode="cover" />
+          <View style={styles.overlay} />
+        </>
+      ) : null}
 
       <View style={[styles.body, { paddingTop: insets.top }]}>
         {onBack ? (
@@ -76,8 +90,21 @@ export function QuoteView({
         <View style={styles.content}>
           <View style={styles.quote}>
             <View style={styles.textBlock}>
-              <Text style={styles.quoteText}>{quote.text}</Text>
-              <Text style={styles.author}>- {quote.author} -</Text>
+              <Text
+                style={[
+                  styles.quoteText,
+                  {
+                    fontFamily,
+                    fontSize: quoteSize,
+                    lineHeight: quoteSize * 1.4,
+                  },
+                ]}
+              >
+                {quote.text}
+              </Text>
+              <Text style={[styles.author, { fontFamily }]}>
+                - {quote.author} -
+              </Text>
             </View>
 
             <View style={styles.actions}>
@@ -107,7 +134,10 @@ export function QuoteView({
               <Pressable
                 hitSlop={8}
                 onPress={() =>
-                  router.push({ pathname: "/collections", params: quoteParams })
+                  router.push({
+                    pathname: "/collections",
+                    params: quoteParams,
+                  })
                 }
                 accessibilityRole="button"
                 accessibilityLabel="Add to collection"
@@ -191,14 +221,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   quoteText: {
-    fontFamily: Fonts.inter.regular,
-    fontSize: 24,
-    lineHeight: 24 * 1.4,
     textAlign: "center",
     color: Colors.text,
   },
   author: {
-    fontFamily: Fonts.inter.medium,
     fontSize: 16,
     lineHeight: 16 * 1.4,
     textAlign: "center",
