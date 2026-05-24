@@ -6,6 +6,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 
 import { AnimatedSplash } from "../components/AnimatedSplash";
+import { Colors } from "../constants/colors";
 import { fontAssets } from "../constants/fonts";
 
 // Keep the native splash (brand background + logo) up until fonts are ready,
@@ -35,7 +36,12 @@ export default function RootLayout() {
 
   return (
     <>
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: Colors.background },
+        }}
+      >
         <Stack.Screen name="index" />
         <Stack.Screen name="sign-in" />
         <Stack.Screen name="sign-up" />
